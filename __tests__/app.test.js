@@ -3,6 +3,10 @@ const db = require("../db/connection");
 const testData = require("../db/data/test-data");
 const seed = require("../db/seeds/seed");
 const app = require("../app");
+const fs = require('fs/promises')
+// const endpoints = fs.readFile("/home/alex/northcoders/backend/project/be-nc-news/endpoints.json", "utf-8").then((endpoints) => {return JSON.parse(endpoints)})
+
+
 
 beforeEach(() => seed(testData));
 
@@ -34,5 +38,19 @@ describe("app", () => {
           });
       });
     });
+    describe("/api/", () => (
+        test("GET 200: should return with an object describing all the other available endpoints on /api/", () => {
+            return fs.readFile("/home/alex/northcoders/backend/project/be-nc-news/endpoints.json",
+            "utf-8")
+            .then((endpoints) => {
+                return request(app)
+                .get("/api/")
+                .expect(200)
+                .then(({body}) => {
+                 expect(body.endpoints).toEqual(JSON.parse(endpoints))   
+                })
+            })
+        })
+    ))
   });
 });
