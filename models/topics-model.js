@@ -37,3 +37,22 @@ exports.fetchArticleById = (id) => {
       return result.rows[0];
     });
 };
+
+exports.fetchArticles = () => {
+  return db.query(`
+    SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comment_id) AS comment_count
+    FROM articles
+    LEFT JOIN comments ON comments.article_id = articles.article_id
+    GROUP BY articles.article_id
+    ORDER BY created_at DESC
+    `)
+    .then((articles) => {
+
+      const updatedArticles = articles.rows.map((article) => {
+      article.comment_count = Number(article.comment_count)
+      return article
+      })
+  
+      return updatedArticles
+    })
+}
