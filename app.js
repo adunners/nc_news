@@ -1,14 +1,35 @@
 const express = require("express")
 const app = express()
-const {getTopics, getApi} = require("./controllers/topics-controllers")
+const {getTopics, getApi, getArticleById} = require("./controllers/topics-controllers")
 
 
 app.get("/api/topics", getTopics)
 
 app.get("/api", getApi)
 
+app.get("/api/articles/:article_id", getArticleById)
+
+
+
+
+
 app.all("/api/*", (req, res, next) => {
     res.status(404).send({msg: "Not Found - path does not exist"})
+})
+
+
+app.use((err, req, res, next) => {
+    if(err.status && err.msg){
+        res.status(err.status).send({msg: err.msg})
+    }
+    else(next(err))
+})
+
+app.use((err, req, res, next) => {
+    if(err.code = "22P02"){
+        res.status(400).send({msg: "Bad Request"})
+    }
+    else{next(err)}
 })
 
 app.use((err, req, res, next) => {
