@@ -1,6 +1,6 @@
 const express = require("express")
 const app = express()
-const {getTopics, getApi, getArticleById, getArticles} = require("./controllers/topics-controllers")
+const {getTopics, getApi, getArticleById, getArticles, getArticleIdComments} = require("./controllers/topics-controllers")
 
 
 app.get("/api/topics", getTopics)
@@ -11,7 +11,7 @@ app.get("/api/articles/:article_id", getArticleById)
 
 app.get("/api/articles", getArticles)
 
-
+app.get("/api/articles/:article_id/comments", getArticleIdComments)
 
 
 

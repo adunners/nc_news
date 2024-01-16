@@ -108,5 +108,43 @@ describe("app", () => {
         })
       })
     })
+    describe("/api/articles/:articles_id/comments", ()=> {
+      test("GET 200: should return with an array of comments for a given article (i.e. article_id)", () => {
+        return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({body}) => {
+          if(body.comments.length === 0)
+          {expect(body.comments).toEqual([])}
+          else{
+          expect(body.comments).toBeSortedBy("created_at", {descending: true})
+          body.comments.forEach((comment) => {
+            expect(typeof comment.comment_id).toBe("number")
+            expect(typeof comment.votes).toBe("number")
+            expect(typeof comment.created_at).toBe("string")
+            expect(typeof comment.author).toBe("string")
+            expect(typeof comment.body).toBe("string")
+            expect(typeof comment.article_id).toBe("number")
+          })
+          }
+        })
+      })
+      test("GET 404: should return with an error if a valid article_id is given but it doesn't exist", () => {
+        return request(app)
+        .get("/api/articles/100/comments")
+        .expect(404)
+        .then(({body}) => {
+          expect(body.msg).toBe("Not Found")
+        })    
+      })
+      test("GET 400: should return with an error if an invalid file path is given", () => {
+        return request(app)
+        .get("/api/articles/invalid/comments")
+        .expect(400)
+        .then(({body}) => {
+          expect(body.msg).toBe("Bad Request")
+        })
+      })
+    })
   });
 });
