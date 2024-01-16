@@ -1,4 +1,4 @@
-const {fetchTopics, fetchApi, fetchArticleById, fetchArticles} = require("../models/topics-model")
+const {fetchTopics, fetchApi, fetchArticleById, fetchArticles, fetchArticleIdComments} = require("../models/topics-model")
 
 exports.getTopics = (req, res, next) => {
  fetchTopics().then((topics) => {
@@ -33,5 +33,20 @@ exports.getArticles = (req, res, next) => {
     })
     .catch((err) => {
     next(err)
+    })
+}
+
+exports.getArticleIdComments = (req, res, next) => {
+    const id = req.params.article_id
+    const fetchQuery = fetchArticleIdComments(id)
+    const idExistenceQuery = fetchArticleById(id)
+
+    Promise.all([fetchQuery, idExistenceQuery])
+
+    .then((comments) => {
+        res.status(200).send({comments: comments[0]})
+    })
+    .catch((err) => {
+        next(err)
     })
 }
