@@ -311,7 +311,7 @@ describe("app", () => {
         expect(body.msg).toBe("Bad Request")
       })
     })
-    test.only("PATCH 400: should return an error when a valid article_id is given, but it doesn't exist", () => {
+    test("PATCH 400: should return an error when a valid article_id is given, but it doesn't exist", () => {
       return request(app)
       .patch("/api/articles/100")
       .send({
