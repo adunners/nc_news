@@ -1,3 +1,4 @@
+const { log } = require("console");
 const db = require("../db/connection");
 const fs = require("fs/promises");
 
@@ -75,6 +76,7 @@ exports.fetchArticleIdComments = (id) => {
 };
 
 exports.addCommentToArticleId = (id, body, username) => {
+
   if (typeof body === "number") {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
@@ -94,6 +96,23 @@ exports.addCommentToArticleId = (id, body, username) => {
       return null;
     })
     .then(() => {
+      return db
+      .query(
+        `
+    SELECT * FROM users
+    WHERE username = $1
+    `,
+        [username]
+      )
+      .then((user) => {
+        if (user.rows.length === 0 && username !== undefined) {
+
+          return Promise.reject({ status: 404, msg: "Not Found" });
+        }
+        return null;
+      })
+    })
+    .then(() => {
     return db.query(
         `
    INSERT INTO comments
@@ -106,8 +125,24 @@ exports.addCommentToArticleId = (id, body, username) => {
       );
     })
     .then((addedComment) => {
-      addedComment.rows[0].created_at = String(addedComment.rows[0].created_at);
-
       return addedComment.rows[0];
     });
 };
+
+
+exports.addVotesToArticlesId = (id, votes) => {
+  return db.query(
+    `
+    UPDATE articles
+    SET votes = $1
+    WHERE article_id = $2
+    RETURNING *
+  `, [votes, id])
+
+  .then((updatedArticle) => {
+    if(updatedArticle.rows.length === 0){
+      return Promise.reject({status: 404, msg: "Not Found"})
+    }
+    return updatedArticle.rows[0]
+  })
+}

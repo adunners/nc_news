@@ -1,4 +1,4 @@
-const {fetchTopics, fetchApi, fetchArticleById, fetchArticles, fetchArticleIdComments, addCommentToArticleId} = require("../models/topics-model")
+const {fetchTopics, fetchApi, fetchArticleById, fetchArticles, fetchArticleIdComments, addCommentToArticleId,  addVotesToArticlesId} = require("../models/topics-model")
 
 exports.getTopics = (req, res, next) => {
  fetchTopics().then((topics) => {
@@ -56,6 +56,17 @@ exports.postCommentToArticleId = (req, res, next) => {
     const {body, username} = req.body
     addCommentToArticleId(id, body, username).then((addedComment) => {
         res.status(201).send({addedComment})
+    })
+    .catch((err) => {
+        next(err)
+    })
+}
+
+exports.updateVotesToArticlesId = (req, res, next) => {
+    const {article_id: id} = req.params
+    const {inc_votes: votes} = req.body
+    addVotesToArticlesId(id, votes).then((updatedArticle) => {
+        res.status(200).send({updatedArticle})
     })
     .catch((err) => {
         next(err)
