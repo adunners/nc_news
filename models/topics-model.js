@@ -87,6 +87,16 @@ exports.fetchComments = () => {
   })
 }
 
+exports.fetchUsers = () => {
+  return db.query(
+    `
+    SELECT * FROM users
+    `
+  ).then((allUsers) => {
+    return allUsers.rows
+  })
+}
+
 //POST
 exports.addCommentToArticleId = (id, body, username) => {
 

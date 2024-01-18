@@ -1,6 +1,6 @@
 const express = require("express")
 const app = express()
-const {getTopics, getApi, getArticleById, getArticles, getArticleIdComments, postCommentToArticleId, updateVotesToArticlesId, getComments, deleteCommentById} = require("./controllers/topics-controllers")
+const {getTopics, getApi, getArticleById, getArticles, getArticleIdComments, postCommentToArticleId, updateVotesToArticlesId, getComments, deleteCommentById, getUsers} = require("./controllers/topics-controllers")
 
 app.use(express.json())
 
@@ -16,6 +16,8 @@ app.get("/api/articles", getArticles)
 app.get("/api/articles/:article_id/comments", getArticleIdComments)
 
 app.get("/api/comments", getComments)
+
+app.get("/api/users", getUsers)
 
 //POST
 app.post("/api/articles/:article_id/comments/", postCommentToArticleId)

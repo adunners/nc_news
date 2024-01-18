@@ -1,4 +1,4 @@
-const {fetchTopics, fetchApi, fetchArticleById, fetchArticles, fetchArticleIdComments, addCommentToArticleId,  addVotesToArticlesId, fetchComments, removeCommentById} = require("../models/topics-model")
+const {fetchTopics, fetchApi, fetchArticleById, fetchArticles, fetchArticleIdComments, addCommentToArticleId,  addVotesToArticlesId, fetchComments, removeCommentById, fetchUsers} = require("../models/topics-model")
 
 //GET
 exports.getTopics = (req, res, next) => {
@@ -55,6 +55,14 @@ exports.getArticleIdComments = (req, res, next) => {
 exports.getComments = (req, res, next) => {
     fetchComments().then((allComments) => {
         res.status(200).send({allComments})
+    }).catch((err) => {
+        next(err)
+    })
+}
+
+exports.getUsers = (req, res, next) => {
+    fetchUsers().then((users) => {
+        res.status(200).send({users})
     }).catch((err) => {
         next(err)
     })
