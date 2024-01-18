@@ -148,7 +148,7 @@ describe("app", () => {
       });
     });
     describe("/api/comments", () => {
-      test("GET 200: GET 200: should respond with an array of comment objects, each should have the correct properties", () => {
+      test("GET 200: should respond with an array of comment objects, each should have the correct properties", () => {
         return request(app)
         .get("/api/comments")
         .expect(200)
@@ -161,6 +161,21 @@ describe("app", () => {
             expect(typeof comment.author).toBe("string");
             expect(typeof comment.comment_id).toBe("number");
             expect(typeof comment.created_at).toBe("string");
+          });
+        });
+      })
+    })
+    describe("/api/users", () => {
+      test("GET 200: should respond with an array of user objects, each should have the correct properties", () => {
+        return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.users.length).toBe(4);
+          body.users.forEach((user) => {
+            expect(typeof user.username).toBe("string");
+            expect(typeof user.name).toBe("string");
+            expect(typeof user.avatar_url).toBe("string");
           });
         });
       })
