@@ -241,87 +241,83 @@ describe("app", () => {
           });
       });
     });
-  })
+  });
   describe("PATCH test", () => {
     describe("/api/articles/:articles_id", () => {
       test("PATCH 200: should accept a valid patch request, and respond with the updated article, containing the updated votes", () => {
         return request(app)
-        .patch("/api/articles/7")
-        .send({
-          inc_votes: 7
-        })
-        .expect(200)
-        .then(({body}) => {
-         expect(body.updatedArticle).toEqual(
-          {
-            article_id: 7,
-            title: "Z",
-            topic: "mitch",
-            author: "icellusedkars",
-            body: "I was hungry.",
-            created_at: expect.any(String),
-            votes: 7,
-            article_img_url:
-              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          },
-         )
-        })
-      })
+          .patch("/api/articles/7")
+          .send({
+            inc_votes: 7,
+          })
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.updatedArticle).toEqual({
+              article_id: 7,
+              title: "Z",
+              topic: "mitch",
+              author: "icellusedkars",
+              body: "I was hungry.",
+              created_at: expect.any(String),
+              votes: 7,
+              article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            });
+          });
+      });
       test("PATCH 400: should return an error if given an invalid article_id", () => {
         return request(app)
-        .patch("/api/articles/invalid")
-        .send({
-          inc_votes: 7
-        })
-        .expect(400)
-        .then(({body}) => {
-         expect(body.msg).toBe("Bad Request")
-      })
-    })
-    test("PATCH 400: should return an error when an invalid data type is given in patch request", () => {
-      return request(app)
-      .patch("/api/articles/7")
-      .send({
-        inc_votes: "banana"
-      })
-      .expect(400)
-      .then(({body}) => {
-        expect(body.msg).toBe("Bad Request")
-      })
-    })
-    test("PATCH 400: should return an error when there is a missing property", () => {
-      return request(app)
-      .patch("/api/articles/7")
-      .send({
-
-      })
-      .expect(400)
-      .then(({body}) => {
-        expect(body.msg).toBe("Bad Request")
-      })
-    })
-    test("PATCH 400: should return an error when there is a wrong property name", () => {
-      return request(app)
-      .patch("/api/articles/7")
-      .send({
-        inc_votesssss: 7
-      })
-      .expect(400)
-      .then(({body}) => {
-        expect(body.msg).toBe("Bad Request")
-      })
-    })
-    test("PATCH 400: should return an error when a valid article_id is given, but it doesn't exist", () => {
-      return request(app)
-      .patch("/api/articles/100")
-      .send({
-        inc_votes: 7
-      })
-      .expect(404)
-      .then(({body}) => {
-        expect(body.msg).toBe("Not Found")
-      })
-    })
-  }) 
+          .patch("/api/articles/invalid")
+          .send({
+            inc_votes: 7,
+          })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+          });
+      });
+      test("PATCH 400: should return an error when an invalid data type is given in patch request", () => {
+        return request(app)
+          .patch("/api/articles/7")
+          .send({
+            inc_votes: "banana",
+          })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+          });
+      });
+      test("PATCH 400: should return an error when there is a missing property", () => {
+        return request(app)
+          .patch("/api/articles/7")
+          .send({})
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+          });
+      });
+      test("PATCH 400: should return an error when there is a wrong property name", () => {
+        return request(app)
+          .patch("/api/articles/7")
+          .send({
+            inc_votesssss: 7,
+          })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request");
+          });
+      });
+      test("PATCH 400: should return an error when a valid article_id is given, but it doesn't exist", () => {
+        return request(app)
+          .patch("/api/articles/100")
+          .send({
+            inc_votes: 7,
+          })
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Not Found");
+          });
+      });
+    });
+  });
 });
-})

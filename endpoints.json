@@ -59,5 +59,39 @@
         }
       ]
     }
+  },
+  "POST /api/articles/1/comments": {
+    "description": "serves an array of a single comment, posted to a specific article, the article corresponds to the article_id e.g. article_id = 1",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "article_id": 1,
+          "body": "excellent work",
+          "votes": 0,
+          "author": "butter_bridge",
+          "created_at": "2020-07-09T20:11:00.000Z",
+          "comment_id": 19
+        }
+      ]
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "serves an array of a single article, which has the votes property updated, the article corresponds to the article_id e.g. article_id = 1",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "article_id": 7,
+          "title": "Z",
+          "topic": "mitch",
+          "author": "icellusedkars",
+          "body": "I was hungry.",
+          "created_at": "2020-07-09T20:11:00.000Z",
+          "votes": 7,
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        }
+      ]
+    }
   }
 }
