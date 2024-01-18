@@ -147,6 +147,24 @@ describe("app", () => {
           });
       });
     });
+    describe("/api/comments", () => {
+      test("GET 200: GET 200: should respond with an array of comment objects, each should have the correct properties", () => {
+        return request(app)
+        .get("/api/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.allComments.length).toBe(18);
+          body.allComments.forEach((comment) => {
+            expect(typeof comment.article_id).toBe("number");
+            expect(typeof comment.body).toBe("string");
+            expect(typeof comment.votes).toBe("number");
+            expect(typeof comment.author).toBe("string");
+            expect(typeof comment.comment_id).toBe("number");
+            expect(typeof comment.created_at).toBe("string");
+          });
+        });
+      })
+    })
   });
   describe("POST test", () => {
     describe("/api/articles/:article_id/comments", () => {
@@ -318,6 +336,41 @@ describe("app", () => {
             expect(body.msg).toBe("Not Found");
           });
       });
+    });
+  });
+  describe("DELETE tests", () => {
+    describe("/api/comments/:comment_id", () => {
+      test("DELETE 204: should accept a valid delete request, and respond with a status code 204 and no content", () => {
+        return request(app)
+          .get("/api/comments")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.allComments.length).toBe(18);
+          })
+          .then(() => {
+            return request(app)
+              .delete("/api/comments/1")
+              .expect(204)
+              .then(() => {
+                return request(app)
+                .get("/api/comments")
+                .expect(200)
+                .then(({ body }) => {
+                  expect(body.allComments.length).toBe(17);
+                })
+              });
+          });
+      });
+      test("DELETE 400: should return with an error if an invalid file path is given", () => {
+        return request(app)
+        .delete("/api/comments/invalid")
+        .expect(400)
+      })
+      test("DELETE 404: should return with an error if an valid file path is given bur it does not exist", () => {
+        return request(app)
+        .delete("/api/comments/100")
+        .expect(404)
+      })
     });
   });
 });

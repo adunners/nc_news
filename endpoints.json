@@ -76,7 +76,7 @@
       ]
     }
   },
-  "PATCH /api/articles/:article_id": {
+  "PATCH /api/articles/1": {
     "description": "serves an array of a single article, which has the votes property updated, the article corresponds to the article_id e.g. article_id = 1",
     "queries": [],
     "exampleResponse": {
@@ -93,5 +93,10 @@
         }
       ]
     }
+  },
+  "DELETE /api/comments/1": {
+    "description": "no content is provided",
+    "queries": [],
+    "exampleResponse": {}
   }
 }

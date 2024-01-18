@@ -1,5 +1,6 @@
-const {fetchTopics, fetchApi, fetchArticleById, fetchArticles, fetchArticleIdComments, addCommentToArticleId,  addVotesToArticlesId} = require("../models/topics-model")
+const {fetchTopics, fetchApi, fetchArticleById, fetchArticles, fetchArticleIdComments, addCommentToArticleId,  addVotesToArticlesId, fetchComments, removeCommentById} = require("../models/topics-model")
 
+//GET
 exports.getTopics = (req, res, next) => {
  fetchTopics().then((topics) => {
     res.status(200).send({topics})
@@ -51,6 +52,15 @@ exports.getArticleIdComments = (req, res, next) => {
     })
 }
 
+exports.getComments = (req, res, next) => {
+    fetchComments().then((allComments) => {
+        res.status(200).send({allComments})
+    }).catch((err) => {
+        next(err)
+    })
+}
+
+//POST
 exports.postCommentToArticleId = (req, res, next) => {
     const {article_id: id} = req.params
     const {body, username} = req.body
@@ -62,6 +72,8 @@ exports.postCommentToArticleId = (req, res, next) => {
     })
 }
 
+
+//PATCH
 exports.updateVotesToArticlesId = (req, res, next) => {
     const {article_id: id} = req.params
     const {inc_votes: votes} = req.body
@@ -72,3 +84,13 @@ exports.updateVotesToArticlesId = (req, res, next) => {
         next(err)
     })
 }
+
+// DELETE
+exports.deleteCommentById = (req, res, next) => {
+    const{comment_id} = req.params
+    removeCommentById(comment_id).then((deletedComment) => {
+        res.status(204).send({deletedComment})
+    }).catch((err) => {
+        next(err)
+    })
+} 
