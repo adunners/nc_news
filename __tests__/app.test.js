@@ -67,6 +67,27 @@ describe("app", () => {
             });
           });
       });
+      test("GET 200: a valid request should return with the total comment_count for the article_id. Comment_count should be an additional property on the return object.", () => {
+        return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({body}) => {
+          expect(body.article).toMatchObject(
+            {
+              article_id: 1,
+              title: "Living in the shadow of a great man",
+              topic: "mitch",
+              author: "butter_bridge",
+              body: "I find this existence challenging",
+              created_at: "2020-07-09T20:11:00.000Z",
+              votes: 100,
+              article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+              comment_count: "11"
+            }
+          )
+        })
+      })
       test("GET 400: should return with an error message if given an invalid request", () => {
         return request(app)
           .get("/api/articles/invalid-request")
@@ -147,39 +168,6 @@ describe("app", () => {
           });
       });
     });
-    describe("/api/comments", () => {
-      test("GET 200: should respond with an array of comment objects, each should have the correct properties", () => {
-        return request(app)
-        .get("/api/comments")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.allComments.length).toBe(18);
-          body.allComments.forEach((comment) => {
-            expect(typeof comment.article_id).toBe("number");
-            expect(typeof comment.body).toBe("string");
-            expect(typeof comment.votes).toBe("number");
-            expect(typeof comment.author).toBe("string");
-            expect(typeof comment.comment_id).toBe("number");
-            expect(typeof comment.created_at).toBe("string");
-          });
-        });
-      })
-    })
-    describe("/api/users", () => {
-      test("GET 200: should respond with an array of user objects, each should have the correct properties", () => {
-        return request(app)
-        .get("/api/users")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.users.length).toBe(4);
-          body.users.forEach((user) => {
-            expect(typeof user.username).toBe("string");
-            expect(typeof user.name).toBe("string");
-            expect(typeof user.avatar_url).toBe("string");
-          });
-        });
-      })
-    })
     describe("/api/articles?filter_by=topic", () => {
       test("GET 200: should return with an array of articles, which have been filtered by the topic given in the request", () => {
         return request(app)
@@ -215,6 +203,39 @@ describe("app", () => {
         .then(({body}) => {
           expect(body.msg).toBe("Not Found")
         })
+      })
+    })
+    describe("/api/comments", () => {
+      test("GET 200: should respond with an array of comment objects, each should have the correct properties", () => {
+        return request(app)
+        .get("/api/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.allComments.length).toBe(18);
+          body.allComments.forEach((comment) => {
+            expect(typeof comment.article_id).toBe("number");
+            expect(typeof comment.body).toBe("string");
+            expect(typeof comment.votes).toBe("number");
+            expect(typeof comment.author).toBe("string");
+            expect(typeof comment.comment_id).toBe("number");
+            expect(typeof comment.created_at).toBe("string");
+          });
+        });
+      })
+    })
+    describe("/api/users", () => {
+      test("GET 200: should respond with an array of user objects, each should have the correct properties", () => {
+        return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.users.length).toBe(4);
+          body.users.forEach((user) => {
+            expect(typeof user.username).toBe("string");
+            expect(typeof user.name).toBe("string");
+            expect(typeof user.avatar_url).toBe("string");
+          });
+        });
       })
     })
   });
