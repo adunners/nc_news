@@ -41,37 +41,23 @@ exports.fetchArticleById = (id) => {
     });
 };
 
-exports.fetchArticles = (topic) => {
-
-  if(topic !== undefined && topic.length === 0){
-    return Promise.reject({status:400, msg: "Bad Request - topic cannot be empty"})
-  }
-  
-   let queryStr = `
+exports.fetchArticles = () => {
+  return db
+    .query(
+      `
     SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comment_id) AS comment_count
     FROM articles
     LEFT JOIN comments ON comments.article_id = articles.article_id
-    `
-
-  const queryParameters = []
-
-  if(topic){
-    queryStr += 
-    `WHERE topic = $1`
-    queryParameters.push(topic)
-  }
-
-   queryStr += `
     GROUP BY articles.article_id
     ORDER BY created_at DESC
     `
-    return db.query(queryStr, queryParameters)
-
+    )
     .then((articles) => {
       const updatedArticles = articles.rows.map((article) => {
         article.comment_count = Number(article.comment_count);
         return article;
-      })
+      });
+
       return updatedArticles;
     });
 };
