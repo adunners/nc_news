@@ -14,7 +14,7 @@ exports.checkTopicExists = (topic) => {
       )
       .then(({ rows }) => {
         if (rows.length === 0) {
-          return Promise.reject({ status: 400, msg: "Not Found" });
+          return Promise.reject({ status: 404, msg: "Not Found" });
         }
       });
   }

@@ -208,7 +208,7 @@ describe("app", () => {
           expect(body.msg).toBe("Bad Request - topic cannot be empty")
         })
       })
-      test.only("GET 404: should return with an error if given a valid request but it does not exist, i.e. topic=banana where banana does not exist as a topic", () => {
+      test("GET 404: should return with an error if given a valid request but it does not exist, i.e. topic=banana where banana does not exist as a topic", () => {
         return request(app)
         .get("/api/articles?topic=banana")
         .expect(404)
