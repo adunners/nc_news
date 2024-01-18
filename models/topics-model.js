@@ -2,6 +2,8 @@ const { log } = require("console");
 const db = require("../db/connection");
 const fs = require("fs/promises");
 
+
+//GET
 exports.fetchTopics = () => {
   return db
     .query(
@@ -9,8 +11,8 @@ exports.fetchTopics = () => {
    SELECT * FROM topics
    `
     )
-    .then(({ rows }) => {
-      return rows;
+    .then((result) => {
+      return result.rows;
     });
 };
 
@@ -75,6 +77,17 @@ exports.fetchArticleIdComments = (id) => {
     });
 };
 
+exports.fetchComments = () => {
+  return db.query(
+    `
+    SELECT * FROM comments
+    `
+  ).then((allComments) => {
+    return allComments.rows
+  })
+}
+
+//POST
 exports.addCommentToArticleId = (id, body, username) => {
 
   if (typeof body === "number") {
@@ -130,6 +143,7 @@ exports.addCommentToArticleId = (id, body, username) => {
 };
 
 
+//PATCH
 exports.addVotesToArticlesId = (id, votes) => {
   return db.query(
     `
@@ -144,5 +158,21 @@ exports.addVotesToArticlesId = (id, votes) => {
       return Promise.reject({status: 404, msg: "Not Found"})
     }
     return updatedArticle.rows[0]
+  })
+}
+
+//DELETE
+exports.removeCommentById = (comment_id) => {
+  return db.query(
+    `
+    DELETE FROM comments
+    WHERE comment_id = $1
+    RETURNING *
+    `, [comment_id]
+  ).then((deletedComment) => {
+    if(deletedComment.rows.length === 0){
+      return Promise.reject({status: 404, msg: "Not Found"})
+    }
+   return deletedComment.rows
   })
 }
