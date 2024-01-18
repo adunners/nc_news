@@ -180,6 +180,43 @@ describe("app", () => {
         });
       })
     })
+    describe("/api/articles?filter_by=topic", () => {
+      test("GET 200: should return with an array of articles, which have been filtered by the topic given in the request", () => {
+        return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(({body}) => {
+          expect(body.articles.length).toBe(12)
+          body.articles.forEach((article) => {
+            expect(article.topic).toBe("mitch")
+          })
+        })
+      })
+      test("GET 200: should respond with an empty array given a topic with no articles", () => {
+        return request(app)
+        .get("/api/articles?topic=paper")
+        .expect(200)
+        .then(({body}) => {
+          expect(body.articles).toEqual([])
+        })
+      })
+      test("GET 400: should return with an error if given an invalid request, i.e. no topic data provided", () => {
+        return request(app)
+        .get("/api/articles?topic=")
+        .expect(400)
+        .then(({body}) => {
+          expect(body.msg).toBe("Bad Request - topic cannot be empty")
+        })
+      })
+      test.only("GET 404: should return with an error if given a valid request but it does not exist, i.e. topic=banana where banana does not exist as a topic", () => {
+        return request(app)
+        .get("/api/articles?topic=banana")
+        .expect(404)
+        .then(({body}) => {
+          expect(body.msg).toBe("Not Found")
+        })
+      })
+    })
   });
   describe("POST test", () => {
     describe("/api/articles/:article_id/comments", () => {

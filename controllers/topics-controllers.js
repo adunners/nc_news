@@ -1,5 +1,7 @@
 const {fetchTopics, fetchApi, fetchArticleById, fetchArticles, fetchArticleIdComments, addCommentToArticleId,  addVotesToArticlesId, fetchComments, removeCommentById, fetchUsers} = require("../models/topics-model")
 
+const{checkTopicExists} = require("../utility")
+
 //GET
 exports.getTopics = (req, res, next) => {
  fetchTopics().then((topics) => {
@@ -29,7 +31,15 @@ exports.getArticleById = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-    fetchArticles().then((articles) => {
+    const {topic} = req.query
+
+    const topicCheckQuery = checkTopicExists(topic)
+    const returnArticlesQuery = fetchArticles(topic)
+    
+    Promise.all([returnArticlesQuery, topicCheckQuery])
+
+    .then((response) => {
+        const articles = response[0]
         res.status(200).send({articles})
     })
     .catch((err) => {
