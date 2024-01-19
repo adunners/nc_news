@@ -211,8 +211,8 @@ describe("app", () => {
         .get("/api/comments")
         .expect(200)
         .then(({ body }) => {
-          expect(body.allComments.length).toBe(18);
-          body.allComments.forEach((comment) => {
+          expect(body.comments.length).toBe(18);
+          body.comments.forEach((comment) => {
             expect(typeof comment.article_id).toBe("number");
             expect(typeof comment.body).toBe("string");
             expect(typeof comment.votes).toBe("number");
@@ -343,7 +343,7 @@ describe("app", () => {
           })
           .expect(200)
           .then(({ body }) => {
-            expect(body.updatedArticle).toEqual({
+            expect(body.article).toMatchObject({
               article_id: 7,
               title: "Z",
               topic: "mitch",
@@ -351,6 +351,27 @@ describe("app", () => {
               body: "I was hungry.",
               created_at: expect.any(String),
               votes: 7,
+              article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            });
+          });
+      });
+      test("PATCH 200: should accept a valid patch request, and respond with the updated article, containing the updated votes", () => {
+        return request(app)
+          .patch("/api/articles/1")
+          .send({
+            inc_votes: -20,
+          })
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.article).toMatchObject({
+              article_id: 1,
+              title: "Living in the shadow of a great man",
+              topic: "mitch",
+              author: "butter_bridge",
+              body: "I find this existence challenging",
+              created_at: expect.any(String),
+              votes: 80,
               article_img_url:
                 "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
             });
@@ -418,7 +439,7 @@ describe("app", () => {
           .get("/api/comments")
           .expect(200)
           .then(({ body }) => {
-            expect(body.allComments.length).toBe(18);
+            expect(body.comments.length).toBe(18);
           })
           .then(() => {
             return request(app)
@@ -429,7 +450,7 @@ describe("app", () => {
                 .get("/api/comments")
                 .expect(200)
                 .then(({ body }) => {
-                  expect(body.allComments.length).toBe(17);
+                  expect(body.comments.length).toBe(17);
                 })
               });
           });

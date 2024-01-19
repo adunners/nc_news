@@ -63,8 +63,8 @@ exports.getArticleIdComments = (req, res, next) => {
 }
 
 exports.getComments = (req, res, next) => {
-    fetchComments().then((allComments) => {
-        res.status(200).send({allComments})
+    fetchComments().then((comments) => {
+        res.status(200).send({comments})
     }).catch((err) => {
         next(err)
     })
@@ -96,7 +96,7 @@ exports.updateVotesToArticlesId = (req, res, next) => {
     const {article_id: id} = req.params
     const {inc_votes: votes} = req.body
     addVotesToArticlesId(id, votes).then((updatedArticle) => {
-        res.status(200).send({updatedArticle})
+        res.status(200).send({article: updatedArticle})
     })
     .catch((err) => {
         next(err)
@@ -107,7 +107,7 @@ exports.updateVotesToArticlesId = (req, res, next) => {
 exports.deleteCommentById = (req, res, next) => {
     const{comment_id} = req.params
     removeCommentById(comment_id).then((deletedComment) => {
-        res.status(204).send({deletedComment})
+        res.status(204).send({comments: deletedComment})
     }).catch((err) => {
         next(err)
     })
