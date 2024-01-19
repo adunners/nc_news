@@ -44,7 +44,19 @@ exports.fetchArticleById = (id) => {
     });
 };
 
-exports.fetchArticles = (topic) => {
+exports.fetchArticles = (topic, sort_by="created_at", sort_criteria="DESC") => {
+
+  const validSortByQueries = ["created_at", "article_id", "topic", "author", "title", "votes", "comment_count"]
+
+  if(!validSortByQueries.includes(sort_by)){
+    return Promise.reject({status: 400, msg: "Invalid sort_by query"})
+  }
+
+  const validSortCriteriaQueries = ["ASC", "DESC"]
+
+  if(!validSortCriteriaQueries.includes(sort_criteria)){
+    return Promise.reject({status: 400, msg: "Invalid sort_criteria query"})
+  }
 
   if(topic !== undefined && topic.length === 0){
     return Promise.reject({status:400, msg: "Bad Request - topic cannot be empty"})
@@ -66,7 +78,7 @@ exports.fetchArticles = (topic) => {
 
    queryStr += `
     GROUP BY articles.article_id
-    ORDER BY created_at DESC
+    ORDER BY ${sort_by} ${sort_criteria}
     `
     return db.query(queryStr, queryParameters)
 

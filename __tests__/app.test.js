@@ -69,11 +69,10 @@ describe("app", () => {
       });
       test("GET 200: a valid request should return with the total comment_count for the article_id. Comment_count should be an additional property on the return object.", () => {
         return request(app)
-        .get("/api/articles/1")
-        .expect(200)
-        .then(({body}) => {
-          expect(body.article).toMatchObject(
-            {
+          .get("/api/articles/1")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.article).toMatchObject({
               article_id: 1,
               title: "Living in the shadow of a great man",
               topic: "mitch",
@@ -83,11 +82,10 @@ describe("app", () => {
               votes: 100,
               article_img_url:
                 "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-              comment_count: "11"
-            }
-          )
-        })
-      })
+              comment_count: "11",
+            });
+          });
+      });
       test("GET 400: should return with an error message if given an invalid request", () => {
         return request(app)
           .get("/api/articles/invalid-request")
@@ -127,6 +125,79 @@ describe("app", () => {
             });
           });
       });
+      describe("/api/articles?topic=mitch", () => {
+        test("GET 200: should return with an array of articles, which have been filtered by the topic given in the request", () => {
+          return request(app)
+            .get("/api/articles?topic=mitch")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.articles.length).toBe(12);
+              body.articles.forEach((article) => {
+                expect(article.topic).toBe("mitch");
+              });
+            });
+        });
+        test("GET 200: should respond with an empty array given a topic with no articles", () => {
+          return request(app)
+            .get("/api/articles?topic=paper")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.articles).toEqual([]);
+            });
+        });
+        test("GET 400: should return with an error if given an invalid request, i.e. no topic data provided", () => {
+          return request(app)
+            .get("/api/articles?topic=")
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe("Bad Request - topic cannot be empty");
+            });
+        });
+        test("GET 404: should return with an error if given a valid request but it does not exist, i.e. topic=banana where banana does not exist as a topic", () => {
+          return request(app)
+            .get("/api/articles?topic=banana")
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe("Not Found");
+            });
+        });
+      });
+      describe("/api/articles?sort_by=created_at", () => {
+        test("GET 200: should accept an valid sort_by request, which sorts the articles by any valid column. It should return an array of the sorted articles, with created_at set as the default.", () => {
+          return request(app)
+            .get("/api/articles?sort_by=created_at")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.articles).toBeSortedBy("created_at", {descending: true})
+            });
+        });
+        test("GET 400: should return an error when given an invalid sort_by request.", () => {
+          return request(app)
+            .get("/api/articles?sort_by=")
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe("Invalid sort_by query")
+            });
+        });
+      });
+      describe(("/api/articles?sort_criteria=ASC"), () => {
+        test("GET 200: should accept a valid sort_criteria, either ASC or DESC.It should return an array of articles, sorted by created_at (which is default, in either ascending or descending order (descending is default", () => {
+          return request(app)
+          .get("/api/articles?sort_criteria=ASC")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).toBeSortedBy("created_at", {ascending: true})
+          });
+        })
+        test("GET 400: it should return with an error if an invalid sort_criteria is given", () => {
+          return request(app)
+          .get("/api/articles?sort_criteria=invalid")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Invalid sort_criteria query")
+          });
+        })
+      })
     });
     describe("/api/articles/:articles_id/comments", () => {
       test("GET 200: should return with an array of comments for a given article (i.e. article_id)", () => {
@@ -168,76 +239,39 @@ describe("app", () => {
           });
       });
     });
-    describe("/api/articles?filter_by=topic", () => {
-      test("GET 200: should return with an array of articles, which have been filtered by the topic given in the request", () => {
-        return request(app)
-        .get("/api/articles?topic=mitch")
-        .expect(200)
-        .then(({body}) => {
-          expect(body.articles.length).toBe(12)
-          body.articles.forEach((article) => {
-            expect(article.topic).toBe("mitch")
-          })
-        })
-      })
-      test("GET 200: should respond with an empty array given a topic with no articles", () => {
-        return request(app)
-        .get("/api/articles?topic=paper")
-        .expect(200)
-        .then(({body}) => {
-          expect(body.articles).toEqual([])
-        })
-      })
-      test("GET 400: should return with an error if given an invalid request, i.e. no topic data provided", () => {
-        return request(app)
-        .get("/api/articles?topic=")
-        .expect(400)
-        .then(({body}) => {
-          expect(body.msg).toBe("Bad Request - topic cannot be empty")
-        })
-      })
-      test("GET 404: should return with an error if given a valid request but it does not exist, i.e. topic=banana where banana does not exist as a topic", () => {
-        return request(app)
-        .get("/api/articles?topic=banana")
-        .expect(404)
-        .then(({body}) => {
-          expect(body.msg).toBe("Not Found")
-        })
-      })
-    })
     describe("/api/comments", () => {
       test("GET 200: should respond with an array of comment objects, each should have the correct properties", () => {
         return request(app)
-        .get("/api/comments")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.comments.length).toBe(18);
-          body.comments.forEach((comment) => {
-            expect(typeof comment.article_id).toBe("number");
-            expect(typeof comment.body).toBe("string");
-            expect(typeof comment.votes).toBe("number");
-            expect(typeof comment.author).toBe("string");
-            expect(typeof comment.comment_id).toBe("number");
-            expect(typeof comment.created_at).toBe("string");
+          .get("/api/comments")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments.length).toBe(18);
+            body.comments.forEach((comment) => {
+              expect(typeof comment.article_id).toBe("number");
+              expect(typeof comment.body).toBe("string");
+              expect(typeof comment.votes).toBe("number");
+              expect(typeof comment.author).toBe("string");
+              expect(typeof comment.comment_id).toBe("number");
+              expect(typeof comment.created_at).toBe("string");
+            });
           });
-        });
-      })
-    })
+      });
+    });
     describe("/api/users", () => {
       test("GET 200: should respond with an array of user objects, each should have the correct properties", () => {
         return request(app)
-        .get("/api/users")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.users.length).toBe(4);
-          body.users.forEach((user) => {
-            expect(typeof user.username).toBe("string");
-            expect(typeof user.name).toBe("string");
-            expect(typeof user.avatar_url).toBe("string");
+          .get("/api/users")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.users.length).toBe(4);
+            body.users.forEach((user) => {
+              expect(typeof user.username).toBe("string");
+              expect(typeof user.name).toBe("string");
+              expect(typeof user.avatar_url).toBe("string");
+            });
           });
-        });
-      })
-    })
+      });
+    });
   });
   describe("POST test", () => {
     describe("/api/articles/:article_id/comments", () => {
@@ -447,24 +481,20 @@ describe("app", () => {
               .expect(204)
               .then(() => {
                 return request(app)
-                .get("/api/comments")
-                .expect(200)
-                .then(({ body }) => {
-                  expect(body.comments.length).toBe(17);
-                })
+                  .get("/api/comments")
+                  .expect(200)
+                  .then(({ body }) => {
+                    expect(body.comments.length).toBe(17);
+                  });
               });
           });
       });
       test("DELETE 400: should return with an error if an invalid file path is given", () => {
-        return request(app)
-        .delete("/api/comments/invalid")
-        .expect(400)
-      })
+        return request(app).delete("/api/comments/invalid").expect(400);
+      });
       test("DELETE 404: should return with an error if an valid file path is given bur it does not exist", () => {
-        return request(app)
-        .delete("/api/comments/100")
-        .expect(404)
-      })
+        return request(app).delete("/api/comments/100").expect(404);
+      });
     });
   });
 });

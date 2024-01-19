@@ -31,10 +31,10 @@ exports.getArticleById = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-    const {topic} = req.query
+    const {topic, sort_by, sort_criteria} = req.query
 
     const topicCheckQuery = checkTopicExists(topic)
-    const returnArticlesQuery = fetchArticles(topic)
+    const returnArticlesQuery = fetchArticles(topic, sort_by, sort_criteria)
     
     Promise.all([returnArticlesQuery, topicCheckQuery])
 
