@@ -1,6 +1,6 @@
-const {fetchTopics, fetchApi, fetchArticleById, fetchArticles, fetchArticleIdComments, addCommentToArticleId,  addVotesToArticlesId, fetchComments, removeCommentById, fetchUsers} = require("../models/topics-model")
+const {fetchTopics, fetchApi, fetchArticleById, fetchArticles, fetchArticleIdComments, addCommentToArticleId,  addVotesToArticlesId, fetchComments, removeCommentById, fetchUsers} = require("../models/model")
 
-const{checkTopicExists} = require("../utility")
+const{checkTopicExists} = require("../utility-controller")
 
 //GET
 exports.getTopics = (req, res, next) => {

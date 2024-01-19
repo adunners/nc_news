@@ -1,6 +1,6 @@
 const express = require("express")
 const app = express()
-const {getTopics, getApi, getArticleById, getArticles, getArticleIdComments, postCommentToArticleId, updateVotesToArticlesId, getComments, deleteCommentById, getUsers} = require("./controllers/topics-controllers")
+const {getTopics, getApi, getArticleById, getArticles, getArticleIdComments, postCommentToArticleId, updateVotesToArticlesId, getComments, deleteCommentById, getUsers} = require("./controllers/controllers")
 
 app.use(express.json())
 

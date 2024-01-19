@@ -4,7 +4,7 @@ Project:
 The project focuses on building a server for a news company, where news articles can be accessed as well as their associated comments, authors details and topics. There is the functionality to post comments to specific articles, filter articles by topic, update the number of votes for each comment and delete comments.
 
 Link to project: 
-https://alex-nc-news.onrender.com
+https://alex-nc-news.onrender.com/api/articles
 
 
 How to create the .env files:
