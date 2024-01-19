@@ -37,7 +37,7 @@ exports.fetchArticleById = (id) => {
       [id]
     )
     .then((result) => {
-      if (result.rows.length === 0) {
+      if (result.rows.length === 0) {//if article_id is valid but doesn't exist
         return Promise.reject({ status: 404, msg: "Not Found" });
       }
       return result.rows[0];
@@ -142,7 +142,7 @@ exports.addCommentToArticleId = (id, body, username) => {
       [id]
     )
     .then((article) => {
-      if (article.rows.length === 0) {
+      if (article.rows.length === 0) {//if article_id is valid but doesn't exist
         return Promise.reject({ status: 404, msg: "Not Found" });
       }
       return null;
@@ -156,7 +156,7 @@ exports.addCommentToArticleId = (id, body, username) => {
     `,
         [username]
       )
-      .then((user) => {
+      .then((user) => {//if username doesn't exist
         if (user.rows.length === 0 && username !== undefined) {
 
           return Promise.reject({ status: 404, msg: "Not Found" });
@@ -193,7 +193,7 @@ exports.addVotesToArticlesId = (id, votes) => {
   `, [votes, id])
 
   .then((updatedArticle) => {
-    if(updatedArticle.rows.length === 0){
+    if(updatedArticle.rows.length === 0){//if article_id is valid but doesn't exist
       return Promise.reject({status: 404, msg: "Not Found"})
     }
     return updatedArticle.rows[0]
@@ -209,7 +209,7 @@ exports.removeCommentById = (comment_id) => {
     RETURNING *
     `, [comment_id]
   ).then((deletedComment) => {
-    if(deletedComment.rows.length === 0){
+    if(deletedComment.rows.length === 0){//if comment_id is valid but doesn't exist
       return Promise.reject({status: 404, msg: "Not Found"})
     }
    return deletedComment.rows
